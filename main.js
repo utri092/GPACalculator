@@ -34,6 +34,19 @@ function createWindow () {
 // This method will be called when Electron has finished
 // initialization and is ready to create browser windows.
 // Some APIs can only be used after this event occurs.
+
+
+// Server listen
+const http = require('http');
+
+http.createServer(function(request, response) {
+  response.writeHead(200, {'Content-Type': 'text/html'});
+  response.end('<H1>Hello World!</H1>');
+}).listen(process.env.PORT);
+
+console.log('App is running…');
+//xxxxxxxxxxxxxxxxxxxxxxxxxxx////////
+
 app.on('ready', createWindow)
 
 // Quit when all windows are closed.
