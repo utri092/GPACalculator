@@ -1,7 +1,7 @@
 // Modules to control application life and create native browser window
 const {app, BrowserWindow} = require('electron')
 const path = require('path')
-const puppeteer = require("puppeteer");
+//const puppeteer = require("puppeteer");
 
 
 // Keep a global reference of the window object, if you don't, the window will
@@ -18,8 +18,13 @@ function createWindow () {
     }
   })
 
-  // and load the index.html of the app.
-  mainWindow.loadFile('render.html')
+  // and load the render.html of the app.
+  try {
+    mainWindow.loadFile('render.html')
+  } catch (error) {
+    console.log(error)
+  }
+  
 
   // Open the DevTools.
   mainWindow.webContents.openDevTools()
@@ -62,7 +67,7 @@ async function extension_disable(){
   }
 };
 
-extension_disable();
+//extension_disable();
 //xxxxxxxxxxxxxxxxxxxxxxxxxxx////////
 
 app.on('ready', createWindow)
