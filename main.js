@@ -37,9 +37,9 @@ function createWindow () {
 
 
 // Disable chromium extensions
-// const browser = await puppeteer.launch({
-//   ignoreDefaultArgs: ['--disable-extensions'],
-// });
+const browser = await puppeteer.launch({
+  ignoreDefaultArgs: ['--disable-extensions'],
+});
 
 
 // Server listen
