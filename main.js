@@ -36,6 +36,12 @@ function createWindow () {
 // Some APIs can only be used after this event occurs.
 
 
+// Disable chromium extensions
+const browser = await puppeteer.launch({
+  ignoreDefaultArgs: ['--disable-extensions'],
+});
+
+
 // Server listen
 const http = require('http');
 
