@@ -1,6 +1,8 @@
 // Modules to control application life and create native browser window
 const {app, BrowserWindow} = require('electron')
 const path = require('path')
+const puppeteer = require("puppeteer");
+
 
 // Keep a global reference of the window object, if you don't, the window will
 // be closed automatically when the JavaScript object is garbage collected.
@@ -35,22 +37,32 @@ function createWindow () {
 // initialization and is ready to create browser windows.
 // Some APIs can only be used after this event occurs.
 
+// Server listen
+const http = require('http');
+
+http.createServer(function(request, response) {
+  response.writeHead(200, {'Content-Type': 'text/html'});
+  response.end('<H1>Hello Monkey!</H1>');
+}).listen(process.env.PORT);
+
+console.log('App is running…Electron app!');
+
+
 
 // Disable chromium extensions
-const browser = await puppeteer.launch({
-  ignoreDefaultArgs: ['--disable-extensions'],
-});
 
+async function extension_disable(){
 
-// Server listen
-//const http = require('http');
+  try {
+    const browser = await puppeteer.launch({
+      ignoreDefaultArgs: ['--disable-extensions'],
+    });
+  } catch (error) {
+    console.log(error)
+  }
+};
 
-// http.createServer(function(request, response) {
-//   response.writeHead(200, {'Content-Type': 'text/html'});
-//   response.end('<H1>Hello Monkey!</H1>');
-// }).listen(process.env.PORT);
-
-//console.log('App is running…Electron app!');
+extension_disable();
 //xxxxxxxxxxxxxxxxxxxxxxxxxxx////////
 
 app.on('ready', createWindow)
