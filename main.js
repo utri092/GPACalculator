@@ -1,6 +1,5 @@
 // Modules to control application life and create native browser window
 const {app, BrowserWindow} = require('electron')
-const puppeteer = require("puppeteer");
 const path = require('path')
 
 
@@ -18,7 +17,7 @@ function createWindow () {
     }
   })
 
-  // and load the render.html of the app.
+  // and load the index.html of the app.
   try {
     mainWindow.loadFile('./index.html')
   } catch (error) {
@@ -47,30 +46,11 @@ const http = require('http');
 
 http.createServer(function(request, response) {
   response.writeHead(200, {'Content-Type': 'text/html'});
-  response.end('<H1>Hello Monkey!</H1>');
-  //response.write(html);
-  //response.end()
+  response.end('<H1>Hello World!</H1>');
 }).listen(process.env.PORT);
 
 console.log('App is running…Electron app!');
 
-
-
-// Disable chromium extensions
-
-async function extension_disable(){
-
-  try {
-    const browser = await puppeteer.launch({
-      ignoreDefaultArgs: ['--disable-extensions'],
-    });
-  } catch (error) {
-    console.log(error)
-  }
-};
-
-//extension_disable();
-//xxxxxxxxxxxxxxxxxxxxxxxxxxx////////
 
 app.on('ready', createWindow)
 
