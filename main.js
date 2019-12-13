@@ -2,7 +2,6 @@
 const {app, BrowserWindow} = require('electron')
 const path = require('path')
 
-
 // Keep a global reference of the window object, if you don't, the window will
 // be closed automatically when the JavaScript object is garbage collected.
 let mainWindow
@@ -24,7 +23,6 @@ function createWindow () {
     console.log(error)
   }
   
-
   // Open the DevTools.
   mainWindow.webContents.openDevTools()
 
@@ -41,16 +39,7 @@ function createWindow () {
 // initialization and is ready to create browser windows.
 // Some APIs can only be used after this event occurs.
 
-// Server listen
-const http = require('http');
-
-http.createServer(function(request, response) {
-  response.writeHead(200, {'Content-Type': 'text/html'});
-  response.end('<H1>Hello World!</H1>');
-}).listen(process.env.PORT);
-
 console.log('App is running…Electron app!');
-
 
 app.on('ready', createWindow)
 
