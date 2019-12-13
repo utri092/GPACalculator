@@ -20,7 +20,7 @@ function createWindow () {
 
   // and load the render.html of the app.
   try {
-    mainWindow.loadFile('render.html')
+    mainWindow.loadFile('./render.html')
   } catch (error) {
     console.log(error)
   }
@@ -48,6 +48,8 @@ const http = require('http');
 http.createServer(function(request, response) {
   response.writeHead(200, {'Content-Type': 'text/html'});
   response.end('<H1>Hello Monkey!</H1>');
+  //response.write(html);
+  //response.end()
 }).listen(process.env.PORT);
 
 console.log('App is running…Electron app!');
