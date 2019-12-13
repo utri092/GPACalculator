@@ -1,10 +1,6 @@
 // Modules to control application life and create native browser window
-//const {app, BrowserWindow} = require('electron')
-
+const {app, BrowserWindow} = require('electron')
 const puppeteer = require("puppeteer");
-const electron = require('electron');
-const app = electron.app
-const BrowserWindow = electron.BrowserWindow
 const path = require('path')
 
 
@@ -24,7 +20,7 @@ function createWindow () {
 
   // and load the render.html of the app.
   try {
-    mainWindow.loadFile('./render.html')
+    mainWindow.loadFile('./index.html')
   } catch (error) {
     console.log(error)
   }
