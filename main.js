@@ -1,7 +1,11 @@
 // Modules to control application life and create native browser window
-const {app, BrowserWindow} = require('electron')
+//const {app, BrowserWindow} = require('electron')
+
+const puppeteer = require("puppeteer");
+const electron = require('electron');
+const app = electron.app
+const BrowserWindow = electron.BrowserWindow
 const path = require('path')
-//const puppeteer = require("puppeteer");
 
 
 // Keep a global reference of the window object, if you don't, the window will
