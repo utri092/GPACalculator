@@ -6,19 +6,19 @@
 // selectively enable features needed in the rendering
 // process.
 
-var totalRows = 1;
-var selectRow = 1;
-var selectTableRowElement;
+var totalRows = 0;
+var selectRow = 0;
 
-//Add first row
+//Add first row when html has loaded
 document.onload = addTableRow();
 
-function getRowIndexandValue(rowElement)
+function getRowIndexAndValues(rowElement)
 {
-   selectTableRowElement = rowElement;
-   selectRow = selectTableRowElement.rowIndex;
+   selectRow = rowElement.rowIndex - 1; //Index starts at 1, rows start from 0
    console.log(selectRow)
    console.log(document.getElementById("grade dropdown row_" + selectRow).value)
+   console.log(document.getElementById("paper value row_" + selectRow).value)
+   console.log(document.getElementById("credits value row_" + selectRow).value)
 }
 
 function addTableRow()
@@ -27,12 +27,12 @@ function addTableRow()
     var newRow = document.createElement("tr");
     newRow.id = "row_" + totalRows;
     newRow.type = "button";
-    newRow.setAttribute("onclick","getRowIndexandValue(this);");
-    newRow.innerHTML = '<th scope="row">Default</th>\
-                        <td>Column content</td>\
-                        <td>Column content</td>\
-                        <td id="grade col row_' + totalRows + '"></td>'
-    
+    newRow.setAttribute("onclick","getRowIndexAndValues(this);");
+
+    newRow.innerHTML = '<td id="paper name row_' + totalRows + '"></td>\
+                        <td id="credits row_' + totalRows + '"></td>\
+                        <td id="grade col row_' + totalRows + '"></td>';
+                        
     document.getElementById("gpa table body").appendChild(newRow);  
 
     document.getElementById("grade col row_" + totalRows).innerHTML = '<div class="nav-item dropdown">\
@@ -44,17 +44,25 @@ function addTableRow()
                                                                                         <option value="A-">A-</option>\
                                                                                     </div>\
                                                                                 </select>\
-                                                                        </div>'
-                                             
+                                                                        </div>';
+    
+
+
+    document.getElementById("paper name row_" + totalRows).innerHTML =  '<div class="form-group has-success">\
+                                                                            <input type="text" value="" id="paper value row_' + totalRows + '">\
+                                                                         </div>';
+
+    document.getElementById("credits row_" + totalRows).innerHTML =  '<div class="form-group has-success">\
+                                                                        <input type="text" value="" id="credits value row_' + totalRows + '">\
+                                                                      </div>';
+    
     totalRows += 1;
            
 }
 
 
-document.getElementById("add row").onclick = function(){
-    addTableRow();
-}
-
+document.getElementById("add row").onclick = addTableRow;
+    
 document.getElementById("delete row").onclick = function(){
 
     if (totalRows >= 1){
