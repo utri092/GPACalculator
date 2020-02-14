@@ -1,19 +1,118 @@
 <!DOCTYPE html>
 <html>
   <head>
+    <link rel="stylesheet" href="./static/bootstrap.css"/>
+
     <meta charset="UTF-8">
     <!-- https://developer.mozilla.org/en-US/docs/Web/HTTP/CSP -->
-    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'">
-    <meta http-equiv="X-Content-Security-Policy" content="default-src 'self'; script-src 'self'">
-    <title>Hello World!</title>
-  </head>
-  <body>
-    <h1>Hello Monkey!</h1>
-    We are using Node.js <span id="node-version"></span>,
-    Chromium <span id="chrome-version"></span>,
-    and Electron <span id="electron-version"></span>.
+    <meta http-equiv="Content-Security-Policy" content= "default-src 'self'; style-src 'self' 'unsafe-inline'; script-src 'self' 'unsafe-inline' 'unsafe-eval'">
+    <meta http-equiv="X-Content-Security-Policy" content="default-src 'self'; style-src 'self' 'unsafe-inline'; script-src 'self' 'unsafe-inline' 'unsafe-eval'">
+    <title>The GPA Calculator Project</title>
 
+  </head>
+  
+  <body>
+    <div>  <!-- Introduction -->
+      <h1>GPA Calculator</h1>
+        <p class="lead">Welcome to our GPA Calculator! Wanna flex your grades? <br>
+          Find out if you got what it takes to transfer to a Kangaroo or Trump University.</p>
+    </div>
+    
+    <table id="gpa table" class="table table-hover">
+      <thead>
+        <tr>
+          <th scope="col">Type</th>
+          <th scope="col">Paper Name</th>
+          <th scope="col">Credits</th>
+          <th scope="col">Grade</th>
+        </tr>
+      </thead>
+      <tbody id="gpa table body">
+      </tbody>
+    </table>
+
+    <button id="add row" type="button" class="btn btn-primary">Add Row</button> <button id="delete row" type="button" class="btn btn-primary">Delete Row</button>
     <!-- You can also require other files to run in this process -->
     <script src="./renderer.js"></script>
   </body>
 </html>
+
+
+<!-- ##################  Unused table classes ##################-->
+
+<!-- <tr class="table-info">
+          <th scope="row">Info</th>
+          <td>Column content</td>
+          <td>Column content</td>
+          <td id="grade col"></td>
+        </tr>
+
+        <tr class="table-danger">
+          <th scope="row">Danger</th>
+          <td>Column content</td>
+          <td>Column content</td>
+          <td id="grade col"></td>
+        </tr>-->
+
+<!-- <tr class="table-danger">
+        <th scope="row">Danger</th>
+        <td>Column content</td>
+        <td>Column content</td>
+        <td>Column content</td>
+      </tr> -->
+
+<!-- <tr class="table-warning">
+        <th scope="row">Warning</th>
+        <td>Column content</td>
+        <td>Column content</td>
+        <td>Column content</td>
+      </tr> -->
+ <!-- <tr class="table-active">
+          <th scope="row">Active</th>
+          <td>Column content</td>
+          <td>Column content</td>
+          <td>Column content</td>
+      </tr> -->
+        
+<!-- <tr class="table-primary">
+          <th scope="row">Primary</th>
+          <td>Column content</td>
+          <td>Column content</td>
+          <td>Column content</td>
+    </tr>
+        
+    <tr class="table-secondary">
+          <th scope="row">Secondary</th>
+          <td>Column content</td>
+          <td>Column content</td>
+          <td>Column content</td>
+    </tr> -->
+
+<!-- <tr class="table-light">
+          <th scope="row">Light</th>
+          <td>Column content</td>
+          <td>Column content</td>
+          <td>Column content</td>
+    </tr>
+
+    <tr class="table-dark">
+          <th scope="row">Dark</th>
+          <td>Column content</td>
+          <td>Column content</td>
+          <td>Column content</td>
+    </tr> -->
+    
+
+    <!-- <tr class="table-warning">
+      <th scope="row">Warning</th>
+      <td>Column content</td>
+      <td>Column content</td>
+      <td>Column content</td>
+    </tr> -->
+    
+    <!-- <tr class="table-success">
+      <th scope="row">Success</th>
+      <td>Column content</td>
+      <td>Column content</td>
+      <td id="grade col"></td>
+    </tr> -->
