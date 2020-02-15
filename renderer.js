@@ -7,19 +7,52 @@
 // process.
 
 var totalRows = 0;
-var selectRow = 0;
+var gpaJson = [];
+//Key NZ grade: Value Country Grade
+var australiaDict = {'A+': 7, 'A': 7, 'A-': 7, 
+                     'B+': 6.5, 'B': 6, 'B-': 5.5,
+                     'C+': 5, 'C': 4.5, 'C-': 4.0, 
+                     'D+, D, D-, DNS, DNC': 0};
+//var usaDict = {'A+', ''};
+
+
 
 //Add first row when html has loaded
 document.onload = addTableRow();
 
-function getRowIndexAndValues(rowElement)
+function getRowIndexAndValues()
 {
-   selectRow = rowElement.rowIndex - 1; //Index starts at 1, rows start from 0
-   console.log(selectRow)
-   console.log(document.getElementById("grade dropdown row_" + selectRow).value)
-   console.log(document.getElementById("paper value row_" + selectRow).value)
-   console.log(document.getElementById("credits value row_" + selectRow).value)
+    
+    //selectRow = rowElement.rowIndex - 1; //Index starts at 1, rows start from 0
+   for(var i = 0; i  < totalRows; i++){
+        
+        var grade =  document.getElementById("grade dropdown row_" + i).value;
+        var subject = (document.getElementById("paper value row_" + i).value);
+        var credits =  (document.getElementById("credits value row_" + i).value);
+        //Create JSON obj
+        var entry = {
+            'grade' : grade,
+            'subject' : subject,
+            'credits' : credits
+        }
+
+        gpaJson.push(entry);
+   }
+//    calculateGPA(gpaJson);
+//    console.log(gpaJson);
 }
+
+// function calculateGPA(){
+
+    
+//     console.log("Worked!");
+    
+//     pdf.create(html, options).toFile('./hey.pdf', function(err, res) {
+//         if (err) return console.log(err);
+//         console.log(res); // { filename: '/app/businesscard.pdf' }
+//     });
+// }
+
 
 function addTableRow()
 {
@@ -27,7 +60,6 @@ function addTableRow()
     var newRow = document.createElement("tr");
     newRow.id = "row_" + totalRows;
     newRow.type = "button";
-    newRow.setAttribute("onclick","getRowIndexAndValues(this);");
 
     newRow.innerHTML = '<td id="paper name row_' + totalRows + '"></td>\
                         <td id="credits row_' + totalRows + '"></td>\
@@ -42,6 +74,13 @@ function addTableRow()
                                                                                         <option value="A+">A+</option>\
                                                                                         <option value="A">A</option>\
                                                                                         <option value="A-">A-</option>\
+                                                                                        <option value="B+>B+</option>\
+                                                                                        <option value="B">B</option>\
+                                                                                        <option value="B-">B-</option>\
+                                                                                        <option value="C+">C+</option>\
+                                                                                        <option value="C">C</option>\
+                                                                                        <option value="C-">C-</option>\
+                                                                                        <option value="D+, D, D-, DNS, DNC">D+, D, D-, DNS, DNC</option>\
                                                                                     </div>\
                                                                                 </select>\
                                                                         </div>';
@@ -60,8 +99,9 @@ function addTableRow()
            
 }
 
-
 document.getElementById("add row").onclick = addTableRow;
+
+document.getElementById("Calculate").onclick = window.pdf.print_pdf;
     
 document.getElementById("delete row").onclick = function(){
 
@@ -72,3 +112,6 @@ document.getElementById("delete row").onclick = function(){
 }
 
 
+ 
+
+  
