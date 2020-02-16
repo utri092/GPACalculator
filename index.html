@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <html>
   <head>
+    
     <link rel="stylesheet" href="./style.css"/>
 
     <meta charset="UTF-8">
@@ -17,24 +18,29 @@
         <p class="lead">Welcome to our GPA Calculator! Wanna flex your grades? <br>
           Find out if you got what it takes to transfer to a Kangaroo or Trump University.</p>
     </div>
-    
-    <table id="gpa table" class="table table-hover">
-      <thead>
-        <tr class="table-primary">
-          <th scope="col">Paper Name</th>
-          <th scope="col">Credits</th>
-          <th scope="col">Grade</th>
-        </tr>
-      </thead>
-      <tbody id="gpa table body">
-      </tbody>
-    </table>
+
+    <section id="Table Section">
+
+      <table id="gpa table" class="table table-hover">
+        <thead>
+          <tr class="table-primary">
+            <th scope="col">Paper Name</th>
+            <th scope="col">Credits</th>
+            <th scope="col">Grade</th>
+          </tr>
+        </thead>
+        <tbody id="gpa table body">
+        </tbody>
+      </table>
+
+    </section>
 
     <button id="add row" type="button" class="btn btn-primary">Add Row</button> 
     <button id="delete row" type="button" class="btn btn-primary">Delete Row</button>
     <button id="Calculate" type="button" class="btn btn-primary">Calculate</button>
 
     <br>
+
 
     <!-- You can also require other files to run in this process -->
     <script src="./renderer.js"></script>

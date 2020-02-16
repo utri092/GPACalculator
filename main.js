@@ -11,6 +11,7 @@ const ipc = electron.ipcMain; // Communicate with renderer.js
 // Keep a global reference of the window object, if you don't, the window will
 // be closed automatically when the JavaScript object is garbage collected.
 let mainWindow;
+let window_to_PDF;
 
 function createWindow () {
   mainWindow = new BrowserWindow({
@@ -22,9 +23,12 @@ function createWindow () {
     }
   })
 
+  window_to_PDF = new BrowserWindow({show : false});
+
+
   // and load the index.html of the app.
   try {
-    mainWindow.loadFile('./index.html')
+    mainWindow.loadFile('./index.html');
   } catch (error) {
     console.log(error)
   }
@@ -37,9 +41,11 @@ function createWindow () {
     // Dereference the window object, usually you would store windows
     // in an array if your app supports multi windows, this is the time
     // when you should delete the corresponding element.
-    mainWindow = null
+    mainWindow = null;
+    window_to_PDF = null;
+    
   })
-
+ 
   
 }
 
@@ -66,18 +72,59 @@ app.on('activate', function() {
 
 // In this file you can include the rest of your app's specific main process
 // code. You can also put them in separate files and require them here.
-ipc.on('print-to-pdf', function(){
+ipc.on('print-pdf', function(){
+//@note ready-to-show can fire multiple times so use once instead of one
+  
+  try{
+    window_to_PDF.loadFile("./transcript.html");
+  }catch(error){
+    console.log(error);
+  }
 
-  mainWindow.webContents.printToPDF({}).then(data => {
-    fs.writeFile('/tmp/print.pdf', data, (error) => {
-      if (error) throw error
-      console.log('Write PDF successfully.')
-    })
-  }).catch(error => {
-    console.log(error)
+  window_to_PDF.once('ready-to-show', () => {
+    
+    window_to_PDF.webContents.printToPDF({}).then(data => {
+      fs.writeFile('./sample.pdf', data, (error) => {
+        if (error) throw error
+
+        console.log('Write PDF successfully.')
+        })
+      }).catch(error => {
+        console.log(error)
+      })
+
   })
+  
+ 
+  // //Turn pdf window to null after generation!
+  // window_to_PDF = null;
 
 });
+
+ipc.on('generate-transcript', function (event, messages) {
+//@ref https://www.brainbell.com/javascript/ipc-communication.html 
+//     https://stackoverflow.com/questions/44127153/how-to-append-a-code-snippet-to-html-using-node-fs
+
+    
+    const tableHtml = messages['transcript']; 
+
+    fs.readFile('./transcript.html', 'utf8', function (err,data) {
+      if (err) {
+        return console.log(err);
+      }
+      
+      const result = data.replace(/\<body>.*<\/body>/s, "<body>" + tableHtml + "</body>");
+    
+      fs.writeFileSync('./transcript.html', result, 'utf8', function (err) {
+         if (err) return console.log(err);
+         
+      })
+
+    })
+
+});
+
+
     
 
 

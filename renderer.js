@@ -7,7 +7,7 @@
 // process.
 
 var totalRows = 0;
-var gpaJson = [];
+var gpaJsonArray = [];
 //Key NZ grade: Value Country Grade
 var australiaDict = {'A+': 7, 'A': 7, 'A-': 7, 
                      'B+': 6.5, 'B': 6, 'B-': 5.5,
@@ -24,7 +24,7 @@ function getRowIndexAndValues()
 {
     
     //selectRow = rowElement.rowIndex - 1; //Index starts at 1, rows start from 0
-   for(var i = 0; i  < totalRows; i++){
+   for(var i = 0; i < totalRows; i++){
         
         var grade =  document.getElementById("grade dropdown row_" + i).value;
         var subject = (document.getElementById("paper value row_" + i).value);
@@ -36,10 +36,10 @@ function getRowIndexAndValues()
             'credits' : credits
         }
 
-        gpaJson.push(entry);
+        gpaJsonArray.push(entry);
    }
-//    calculateGPA(gpaJson);
-//    console.log(gpaJson);
+//    calculateGPA(gpaJsonArray);
+//    console.log(gpaJsonArray);
 }
 
 // function calculateGPA(){
@@ -53,10 +53,19 @@ function getRowIndexAndValues()
 //     });
 // }
 
+function generateTranscript(){
+
+    const table = document.getElementById("Table Section").innerHTML;
+
+    const payload = {'transcript':table};
+
+    window.transcript.generateTranscript(payload);
+
+    window.transcript.printPDF();
+}
 
 function addTableRow()
 {
-    
     var newRow = document.createElement("tr");
     newRow.id = "row_" + totalRows;
     newRow.type = "button";
@@ -95,13 +104,12 @@ function addTableRow()
                                                                         <input type="text" value="" id="credits value row_' + totalRows + '">\
                                                                       </div>';
     
-    totalRows += 1;
-           
+    totalRows += 1;     
 }
 
 document.getElementById("add row").onclick = addTableRow;
 
-document.getElementById("Calculate").onclick = window.pdf.print_pdf;
+document.getElementById("Calculate").onclick = generateTranscript;
     
 document.getElementById("delete row").onclick = function(){
 
