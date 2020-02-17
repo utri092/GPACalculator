@@ -71,6 +71,7 @@
    text-align: left;
    background-color: #fff;
  }
+
  
  [tabindex="-1"]:focus:not(:focus-visible) {
    outline: 0 !important;
@@ -2336,6 +2337,7 @@
    padding: 0.5rem 1rem;
    font-size: 0.765625rem;
    line-height: 1.5;
+   width: 50px;
  }
  
  .form-control-lg {
@@ -7061,6 +7063,13 @@
    content: "";
  }
  
+ table{
+  /*
+  @ref https://css-tricks.com/almanac/properties/t/table-layout/
+  Equally divide columns"*/
+  table-layout: fixed;
+ }
+
  .d-none {
    display: none !important;
  }

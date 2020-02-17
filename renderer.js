@@ -6,26 +6,24 @@
 // selectively enable features needed in the rendering
 // process.
 
-var totalRows = 0;
+var totalTables = 0;
 var gpaJsonArray = [];
 //Key NZ grade: Value Country Grade
 var australiaDict = {'A+': 7, 'A': 7, 'A-': 7, 
                      'B+': 6.5, 'B': 6, 'B-': 5.5,
                      'C+': 5, 'C': 4.5, 'C-': 4.0, 
                      'D+, D, D-, DNS, DNC': 0};
+
 //var usaDict = {'A+', ''};
 
-
-
 //Add first row when html has loaded
-document.onload = addTableRow();
+document.onload = addTable();
 
 function getRowIndexAndValues()
 {
     
     //selectRow = rowElement.rowIndex - 1; //Index starts at 1, rows start from 0
    for(var i = 0; i < totalRows; i++){
-        
         var grade =  document.getElementById("grade dropdown row_" + i).value;
         var subject = (document.getElementById("paper value row_" + i).value);
         var credits =  (document.getElementById("credits value row_" + i).value);
@@ -64,60 +62,156 @@ function generateTranscript(){
     window.transcript.printPDF();
 }
 
-function addTableRow()
-{
+function deleteTableRow(cellElement){
+
+    const cellParent = cellElement.parentElement;
+    
+    const rowParent = cellParent.parentElement;
+
+    const tableBodyParent = rowParent.parentElement;
+
+    const tableParent = tableBodyParent.parentElement;
+    tableParent.deleteRow(rowParent.rowIndex);
+
+}
+
+function addTableRow(table_id_str){
+
+    const no_index = table_id_str.indexOf("_")
+    const table_no = table_id_str.slice(no_index + 1);
+
+    console.log(table_no);
+
     var newRow = document.createElement("tr");
-    newRow.id = "row_" + totalRows;
-    newRow.type = "button";
 
-    newRow.innerHTML = '<td id="paper name row_' + totalRows + '"></td>\
-                        <td id="credits row_' + totalRows + '"></td>\
-                        <td id="grade col row_' + totalRows + '"></td>';
-                        
-    document.getElementById("gpa table body").appendChild(newRow);  
+    var newCell_0 = document.createElement("td");
+    var newCell_1 = document.createElement("td");
+    var newCell_2 = document.createElement("td");
+    var newCell_3 = document.createElement("td");
 
-    document.getElementById("grade col row_" + totalRows).innerHTML = '<div class="nav-item dropdown">\
-                                                                                <select id="grade dropdown row_' + totalRows +  '" class="nav-link dropdown-menu" role="button" aria-haspopup="true" aria-expanded="false">\
-                                                                                    <div id="option list row_' + totalRows + ' class="dropdown-item">\
-                                                                                        <option value="Select Grade">Select Grade</option>\
-                                                                                        <option value="A+">A+</option>\
-                                                                                        <option value="A">A</option>\
-                                                                                        <option value="A-">A-</option>\
-                                                                                        <option value="B+>B+</option>\
-                                                                                        <option value="B">B</option>\
-                                                                                        <option value="B-">B-</option>\
-                                                                                        <option value="C+">C+</option>\
-                                                                                        <option value="C">C</option>\
-                                                                                        <option value="C-">C-</option>\
-                                                                                        <option value="D+, D, D-, DNS, DNC">D+, D, D-, DNS, DNC</option>\
-                                                                                    </div>\
-                                                                                </select>\
-                                                                        </div>';
+    newRow.appendChild(newCell_0);
+    newRow.appendChild(newCell_1);
+    newRow.appendChild(newCell_2);
+    newRow.appendChild(newCell_3);
     
-
-
-    document.getElementById("paper name row_" + totalRows).innerHTML =  '<div class="form-group has-success">\
-                                                                            <input type="text" value="" id="paper value row_' + totalRows + '">\
-                                                                         </div>';
-
-    document.getElementById("credits row_" + totalRows).innerHTML =  '<div class="form-group has-success">\
-                                                                        <input type="text" value="" id="credits value row_' + totalRows + '">\
-                                                                      </div>';
+    //Make row first child of Table
+    document.getElementById("gpa table body no_" + table_no).prepend(newRow); 
     
-    totalRows += 1;     
+    var formHTML = '<div class="form-group has-success">\
+                        <input type="text" value="">\
+                    </div>';
+
+    newRow.cells[0].innerHTML =  formHTML;
+
+    newRow.cells[1].innerHTML =  formHTML;
+
+    newRow.cells[2].innerHTML = '<div class="nav-item dropdown">\
+                                        <select class="nav-link dropdown-menu" role="button" aria-haspopup="true" aria-expanded="false">\
+                                            <div class="dropdown-item">\
+                                                <option value="Select Grade">Select Grade</option>\
+                                                <option value="A+">A+</option>\
+                                                <option value="A">A</option>\
+                                                <option value="A-">A-</option>\
+                                                <option value="B+>B+</option>\
+                                                <option value="B">B</option>\
+                                                <option value="B-">B-</option>\
+                                                <option value="C+">C+</option>\
+                                                <option value="C">C</option>\
+                                                <option value="C-">C-</option>\
+                                                <option value="D+, D, D-, DNS, DNC">D+, D, D-, DNS, DNC</option>\
+                                            </div>\
+                                        </select>\
+                                </div>';
+
+    newRow.cells[3].innerHTML = '<button class="btn btn-primary" onclick="deleteTableRow(this)" style="width: 20 px; position: relative">X</button>';
+                                
 }
 
-document.getElementById("add row").onclick = addTableRow;
 
-document.getElementById("Calculate").onclick = generateTranscript;
+function addTable(){
+
+    // Table Section Parent 1:- Child Table
+    var tableSection = document.getElementById("Table Section");
+
+    //Table Parent 2:- Children=below
+    var newTable = document.createElement('table');
+    newTable.setAttribute("id", "gpa table no_" + totalTables);
+    newTable.setAttribute("class", "table table-hover");
+
+    //Table Header
+    var tableHeader = document.createElement('thead');
+    var headerRow = document.createElement('tr');
+    headerRow.setAttribute("class", "table-primary");
+
+    var headerCol_0 = document.createElement('th');
+    var headerCol_1 = document.createElement('th');
+    var headerCol_2 = document.createElement('th');
+    var headerCol_3 = document.createElement('th');
     
-document.getElementById("delete row").onclick = function(){
+    headerCol_0.innerText = "Paper Name";
+    headerCol_1.innerText = "Credits";
+    headerCol_2.innerText = "Grade";
+    headerCol_3.innerText = "";
+    headerRow.appendChild(headerCol_0);
+    headerRow.appendChild(headerCol_1);
+    headerRow.appendChild(headerCol_2);
+    headerRow.appendChild(headerCol_3);
+    
+    //Table Body
+    var tableBody = document.createElement('tbody');
+    tableBody.setAttribute("id", "gpa table body no_" + totalTables);
 
-    if (totalRows >= 1){
-        document.getElementById("gpa table").deleteRow(totalRows);
-        totalRows -= 1;
-    }
+    //Add Row Option
+    var addRowForm = document.createElement('div');
+    addRowForm.setAttribute("class", "form-group");
+    addRowForm.setAttribute("style", "display: inline-block; position: relative;");
+
+    var formLabel = document.createElement('label');
+    formLabel.innerText = "Number of rows to add:";
+    formLabel.setAttribute("for", "add row form no_");
+    formLabel.setAttribute("class", "col-form-label-sm");
+    formLabel.setAttribute("style", "margin-left: 5px;")
+
+    var formInput = document.createElement('input');
+    formInput.setAttribute("class", "form-control-sm");
+    formInput.setAttribute("style", "margin-left: 10px;")
+    formInput.setAttribute("type", "text");
+    formInput.setAttribute("id", "add row form no_" + totalTables);
+    
+    var addRowBtn = document.createElement('button');
+    addRowBtn.setAttribute("id", "add row no_" + totalTables);
+    addRowBtn.setAttribute("class", "btn btn-info");
+    addRowBtn.setAttribute("style", "margin-left: 10px; font-size:15px; width: 120px; height: 30px; padding:0.25em");
+    addRowBtn.innerText = "Add Row";
+    addRowBtn.setAttribute("onclick", "addTableRow(this.id)");
+
+    addRowForm.appendChild(formLabel);
+    addRowForm.appendChild(formInput);
+    addRowForm.appendChild(addRowBtn);
+    
+    tableHeader.appendChild(headerRow);
+    tableBody.appendChild(addRowForm);
+    newTable.appendChild(tableHeader);
+    newTable.appendChild(tableBody);
+    
+    //newTable.appendChild(delTableBtn);
+    tableSection.appendChild(newTable);
+
+    totalTables += 1;
+
+    // var delTableBtn = document.createElement('button');
+    // delTableBtn.id = "delete table no_" + totalTables;
+    // delTableBtn.class = "btn btn-primary";
+
+    
+
 }
+
+
+document.getElementById("calculate").onclick = generateTranscript;
+
+//document.getElementById("add Table").onclick = generateTable;
+    
 
 
  

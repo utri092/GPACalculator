@@ -45,9 +45,8 @@ function createWindow () {
     window_to_PDF = null;
     
   })
- 
   
-}
+};
 
 // This method will be called when Electron has finished
 // initialization and is ready to create browser windows.
@@ -104,6 +103,7 @@ ipc.on('print-pdf', function(){
 ipc.on('generate-transcript', function (event, messages) {
 //@ref https://www.brainbell.com/javascript/ipc-communication.html 
 //     https://stackoverflow.com/questions/44127153/how-to-append-a-code-snippet-to-html-using-node-fs
+//@note /s regex for all lines 
 
     
     const tableHtml = messages['transcript']; 
