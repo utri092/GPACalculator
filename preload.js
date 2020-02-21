@@ -18,12 +18,11 @@ window.addEventListener('DOMContentLoaded', () => {
 
 contextBridge.exposeInMainWorld(
   //@note Needs contextIsolation in BrowserWindow webPreferences to be enabled
-  //@detail property pdf enables methods inside to be used by renderer.js. In this case it talks with the main process
+  //@detail property pdf enables methods inside to be used by renderer processes. In this case it talks with the main process
   //@ref https://www.electronjs.org/docs/api/context-bridge https://codeburst.io/what-is-prototype-pollution-49482fc4b638 
   
   'transcript',
-  {
-    printPDF: () => ipcRenderer.send('print-pdf'),
-    generateTranscript: (arg_json) => ipcRenderer.send('generate-transcript', arg_json)
+  {  
+    generateTranscript: (arg_json) => ipcRenderer.send('generate-transcript', arg_json),
   }
 )

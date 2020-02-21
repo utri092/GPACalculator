@@ -1,3 +1,5 @@
+//import { ipcRenderer } from "electron";
+
 // This file is required by the index.html file and will
 // be executed in the renderer process for that window.
 // No Node.js APIs are available in this process because
@@ -6,7 +8,7 @@
 // process.
 
 var totalTables = 0;
-var gpaJsonArray = [];
+
 //Key NZ grade: Value Country Grade
 var australiaDict = {'A+': 7, 'A': 7, 'A-': 7, 
                      'B+': 6.5, 'B': 6, 'B-': 5.5,
@@ -18,57 +20,80 @@ var australiaDict = {'A+': 7, 'A': 7, 'A-': 7,
 //Add first row when html has loaded
 document.onload = addTable();
 
-function getRowIndexAndValues(){
+function getTableAndValues(){
 
-    //selectRow = rowElement.rowIndex - 1; //Index starts at 1, rows start from 0
-   for(var i = 0; i < totalRows; i++){
-        var grade =  document.getElementById("grade dropdown row_" + i).value;
-        var subject = (document.getElementById("paper value row_" + i).value);
-        var credits =  (document.getElementById("credits value row_" + i).value);
-        //Create JSON obj
-        var entry = {
-            'grade' : grade,
-            'subject' : subject,
-            'credits' : credits
+   var tableElem, rowElem, divElem;
+   var grade, subject, credits, entry;
+   var gpaJsonArray = {};
+
+
+   gpaJsonArray['totalTables'] = totalTables;
+
+   for(var i = 0; i < totalTables; i++){
+       tableElem = document.getElementsByTagName('table')[i];
+
+        //Init Values Array
+        gpaJsonArray[i] = [];
+
+        var totalRows = tableElem.rows.length;
+        //j = 1 for ignoring header row
+        for(var j = 1; j < totalRows; j++){
+
+            rowElem = tableElem.rows[j];
+
+            //Extract Paper Name from Div
+            divElem = rowElem.cells[0].childNodes[0];
+            subject = divElem.childNodes[1].value;
+            //divElem.childNodes[1].setAttribute("value", subject);
+            
+            //Extract Credits from Div
+            divElem = rowElem.cells[1].childNodes[0];
+            credits = divElem.childNodes[1].value;
+            //divElem.childNodes[1].setAttribute("value", credits);
+            
+            //Extract Grade from DropDown
+            divElem = rowElem.cells[2].childNodes[1];
+            grade = divElem.childNodes[1].value;
+        
+            entry = {   'grade' : grade,
+                        'subject' : subject,
+                        'credits' : credits
+                    };
+
+            
+
+            gpaJsonArray[i].push(entry);
+            
         }
 
-        gpaJsonArray.push(entry);
+        
    }
-//    calculateGPA(gpaJsonArray);
-//    console.log(gpaJsonArray);
-}
 
-// function calculateGPA(){
+   return gpaJsonArray
 
-    
-//     console.log("Worked!");
-    
-//     pdf.create(html, options).toFile('./hey.pdf', function(err, res) {
-//         if (err) return console.log(err);
-//         console.log(res); // { filename: '/app/businesscard.pdf' }
-//     });
-// }
+};
+
 
 function generateTranscript(){
+    
+    const gpaInfo = getTableAndValues();
 
-    const table = document.getElementById("Table Section").innerHTML;
-
-    const payload = {'transcript':table};
+    const payload = {'gpaInfo': gpaInfo};
 
     window.transcript.generateTranscript(payload);
 
-    window.transcript.printPDF();
 }
 
 function deleteTableRow(cellElement){
 
     const cellParent = cellElement.parentElement;
-    
+
     const rowParent = cellParent.parentElement;
 
     const tableBodyParent = rowParent.parentElement;
 
     const tableParent = tableBodyParent.parentElement;
+
     tableParent.deleteRow(rowParent.rowIndex);
 
 }
@@ -76,20 +101,22 @@ function deleteTableRow(cellElement){
 function deleteTable(buttonElement){
 
     const tableBodyParent = buttonElement.parentElement;
-
     //Remove Table
     tableBodyParent.parentElement.remove();
-    
+    totalTables -= 1;
+
 }
 
-function addTableRow(table_id_str){
+function addTableRows(buttonElem){
 
-    const no_index = table_id_str.indexOf("_");
-    const table_no = table_id_str.slice(no_index + 1);
+    const tableBodyElem = buttonElem.parentElement.parentElement;
 
-    var noRows = parseInt(document.getElementById("add row form no_" + table_no).value, 10);
+    //Get input form value
+    var noRows = buttonElem.parentElement.childNodes[1].value;
 
-    if (isNaN(noRows)) noRows = 0;
+    noRows = parseInt(noRows, 10);
+    
+    if (isNaN(noRows)) noRows = 1;
 
     for (var i = 0; i < noRows; i++){
 
@@ -105,10 +132,9 @@ function addTableRow(table_id_str){
         newRow.appendChild(newCell_2);
         newRow.appendChild(newCell_3);
         
-        //Make row first child of Table
-        document.getElementById("gpa table body no_" + table_no).prepend(newRow); 
         
-        var formHTML = '<div class="form-group has-success">\
+        
+        const formHTML = '<div class="form-group has-success">\
                             <input type="text" value="">\
                         </div>';
 
@@ -136,6 +162,9 @@ function addTableRow(table_id_str){
 
         newRow.cells[3].innerHTML = '<button class="btn btn-primary" onclick="deleteTableRow(this)">X</button>';
 
+        //Make Row first child
+        tableBodyElem.prepend(newRow); 
+
     }
                                 
 }
@@ -148,7 +177,6 @@ function addTable(){
 
     //Table Parent 2:- Children=below
     var newTable = document.createElement('table');
-    newTable.setAttribute("id", "gpa table no_" + totalTables);
     newTable.setAttribute("class", "table table-hover");
 
     //Table Header
@@ -172,7 +200,6 @@ function addTable(){
     
     //Table Body
     var tableBody = document.createElement('tbody');
-    tableBody.setAttribute("id", "gpa table body no_" + totalTables);
 
     //Add Row Option
     var addRowForm = document.createElement('div');
@@ -182,7 +209,6 @@ function addTable(){
 
     var formLabel = document.createElement('label');
     formLabel.innerHTML = '<p class="mb-0">Number of rows to add:</p>';
-    formLabel.setAttribute("for", "add row form no_");
     formLabel.setAttribute("class", "col-form-label-sm");
     formLabel.setAttribute("style", "margin-left: 5px; font-size: 15px")
 
@@ -190,28 +216,25 @@ function addTable(){
     formInput.setAttribute("class", "form-control-sm");
     formInput.setAttribute("style", "margin-left: 10px;")
     formInput.setAttribute("type", "text");
-    formInput.setAttribute("id", "add row form no_" + totalTables);
+
+    var addRowBtn = document.createElement('button');
+    addRowBtn.setAttribute("class", "btn btn-info");
+    addRowBtn.setAttribute("style", "font-size:15px; padding:0.25em; margin-left: 5px;");
+    addRowBtn.setAttribute("onclick", "addTableRows(this)");
+    addRowBtn.innerText = "+";
     
     addRowForm.appendChild(formLabel);
     addRowForm.appendChild(formInput);
+    addRowForm.appendChild(addRowBtn);
     tableHeader.appendChild(headerRow);
     tableBody.appendChild(addRowForm);
 
-    var addRowBtn = document.createElement('button');
-    addRowBtn.setAttribute("id", "add row no_" + totalTables);
-    addRowBtn.setAttribute("class", "btn btn-info");
-    addRowBtn.setAttribute("style", "font-size:15px; padding:0.25em; margin-left: 5px;");
-    addRowBtn.setAttribute("onclick", "addTableRow(this.id)");
-    addRowBtn.innerText = "+";
-
     var delTableBtn = document.createElement('button');
-    delTableBtn.setAttribute("id", "delete table no_" + totalTables);
     delTableBtn.setAttribute("class", "btn btn-warning");
     delTableBtn.setAttribute("onclick", "deleteTable(this)");
     delTableBtn.setAttribute("style", "font-size:15px; padding:0.25em; float:left; margin-left: 5px;");
     delTableBtn.innerText = "Delete Table";
 
-    tableBody.appendChild(addRowBtn);
     tableBody.appendChild(document.createElement('br'));
     tableBody.appendChild(delTableBtn);
 
@@ -223,8 +246,7 @@ function addTable(){
     totalTables += 1;
 }
 
-
-//document.getElementById("calculate").onclick = generateTranscript;
+document.getElementById("calculate").onclick = generateTranscript;
 
 document.getElementById("add Table").onclick = addTable;
 

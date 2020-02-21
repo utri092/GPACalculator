@@ -4,9 +4,10 @@ const app = electron.app;
 const BrowserWindow = electron.BrowserWindow;
 const path = require('path');
 const fs = require('fs');
+const url = require('url');
 
 ////////////////###########################\\\\\\\\\\\\\\\\\
-const ipc = electron.ipcMain; // Communicate with renderer.js
+const ipc = electron.ipcMain; // Communicate with with window renderers
 
 // Keep a global reference of the window object, if you don't, the window will
 // be closed automatically when the JavaScript object is garbage collected.
@@ -23,18 +24,16 @@ function createWindow () {
     }
   })
 
-  window_to_PDF = new BrowserWindow({show : false});
-
-
+ 
   // and load the index.html of the app.
   try {
     mainWindow.loadFile('./index.html');
   } catch (error) {
-    console.log(error)
+    console.log(error);
   }
 
   // Open the DevTools.
-  mainWindow.webContents.openDevTools()
+  mainWindow.webContents.openDevTools();
   
   // Emitted when the window is closed.
   mainWindow.on('closed', function () {
@@ -45,7 +44,7 @@ function createWindow () {
     window_to_PDF = null;
     
   })
-  
+ 
 };
 
 // This method will be called when Electron has finished
@@ -55,6 +54,8 @@ function createWindow () {
 console.log('App is running…Electron app!');
 
 app.on('ready', createWindow)
+
+
 
 // Quit when all windows are closed.
 app.on('window-all-closed', function () {
@@ -71,64 +72,59 @@ app.on('activate', function() {
 
 // In this file you can include the rest of your app's specific main process
 // code. You can also put them in separate files and require them here.
-ipc.on('print-pdf', function(){
-//@note ready-to-show can fire multiple times so use once instead of one
-  
-  try{
-    window_to_PDF.loadFile("./transcript.html");
-  }catch(error){
-    console.log(error);
-  }
 
-  window_to_PDF.once('ready-to-show', () => {
-    
-    window_to_PDF.webContents.printToPDF({}).then(data => {
-      fs.writeFile('./sample.pdf', data, (error) => {
-        if (error) throw error
-
-        console.log('Write PDF successfully.')
-        })
-      }).catch(error => {
-        console.log(error)
-      })
-
-  })
-  
- 
-  // //Turn pdf window to null after generation!
-  // window_to_PDF = null;
-
-});
-
-ipc.on('generate-transcript', function (event, messages) {
+ipc.on('generate-transcript', function (error, messages) {
 //@ref https://www.brainbell.com/javascript/ipc-communication.html 
-//     https://stackoverflow.com/questions/44127153/how-to-append-a-code-snippet-to-html-using-node-fs
-//@note /s regex for all lines 
+   
+    window_to_PDF = new BrowserWindow({show: false, 
+                                      webPreferences: {nodeIntegration: true},
+                                      parent: mainWindow});
 
+
+   
     
-    const tableHtml = messages['transcript']; 
+    window_to_PDF.loadURL(url.format({ pathname: path.join(__dirname, "transcript.html"),
+    protocol: "file",
+    slashes: true
+                                    })).then(() => {
 
-    fs.readFile('./transcript.html', 'utf8', function (err,data) {
-      if (err) {
-        return console.log(err);
-      }
+
+      //Important for refreshing pdf
+      window_to_PDF.reload();
+      window_to_PDF.webContents.clearHistory();                                 
+                                  
+      window_to_PDF.webContents.openDevTools();
+      window_to_PDF.webContents.send("print-pdf", messages);
       
-      const result = data.replace(/\<body>.*<\/body>/s, "<body>" + tableHtml + "</body>");
-    
-      fs.writeFileSync('./transcript.html', result, 'utf8', function (err) {
-         if (err) return console.log(err);
-         
-      })
+      
+    });
+                                    
+  
 
+    window_to_PDF.on('closed', function () {
+      // Dereference the window object, usually you would store windows
+      // in an array if your app supports multi windows, this is the time
+      // when you should delete the corresponding element.
+      window_to_PDF = null;
     })
 
 });
-
-
     
+   
+ipc.on('print-pdf-done', function(){
 
+  //Async method
+  window_to_PDF.webContents.printToPDF({}).then(data => {
+    fs.writeFile('./sample.pdf', data, (error) => {
+    if (error) throw error
+    //Close window on rendering
+    window_to_PDF.close()
+    console.log('Write PDF successfully.')
+    })
+  }).catch(error => {
+    console.log(error)
+  })
 
+  console.log("Print pdf called!");
 
-
-
-
+})
