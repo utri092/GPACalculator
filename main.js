@@ -24,14 +24,10 @@ function createWindow () {
     }
   })
 
-  window_to_PDF = new BrowserWindow({show: false, 
-    webPreferences: {nodeIntegration: true},
-    parent: mainWindow});
-
+  
   // and load the index.html of the app.
   try {
     mainWindow.loadFile('./index.html');
-    window_to_PDF.loadFile('./transcript.html');
   } catch (error) {
     console.log(error);
   }
@@ -45,7 +41,6 @@ function createWindow () {
     // in an array if your app supports multi windows, this is the time
     // when you should delete the corresponding element.
     mainWindow = null;
-    window_to_PDF = null;
     
   })
  
@@ -80,14 +75,23 @@ app.on('activate', function() {
 ipc.on('generate-transcript', function (error, messages) {
 //@ref https://www.brainbell.com/javascript/ipc-communication.html 
    
-    
+    window_to_PDF = new BrowserWindow({show: false, 
+      webPreferences: {nodeIntegration: true},
+      parent: mainWindow});
 
-    //Important for refreshing pdf
     window_to_PDF.reload();
-    window_to_PDF.webContents.clearHistory();                                 
-                                
-    window_to_PDF.webContents.openDevTools();
-    window_to_PDF.webContents.send("print-pdf", messages);
+    window_to_PDF.webContents.clearHistory();  
+
+    window_to_PDF.loadFile('./transcript.html').then(()=>{
+                                     
+                                  
+      window_to_PDF.webContents.openDevTools();
+      window_to_PDF.webContents.send("print-pdf", messages);
+    }).catch(error => {
+        console.log(error)
+    })
+    //Important for refreshing pdf
+   
       
     window_to_PDF.on('closed', function () {
       // Dereference the window object, usually you would store windows
@@ -102,15 +106,20 @@ ipc.on('generate-transcript', function (error, messages) {
 ipc.on('print-pdf-done', function(){
 
   //Async method
-  window_to_PDF.webContents.printToPDF({}).then(data => {
-    fs.writeFile('./sample.pdf', data, (error) => {
-    if (error) throw error
-    //Close window on rendering
-    //window_to_PDF.close()
-    console.log('Write PDF successfully.')
-    })
-  }).catch(error => {
-    console.log(error)
+  // window_to_PDF.webContents.printToPDF({}).then(data => {
+  //   fs.writeFile('./sample.pdf', data, (error) => {
+  //   if (error) throw error
+  //   //Close window on rendering
+  //   //window_to_PDF.close()
+  //   console.log('Write PDF successfully.')
+  //   })
+  // }).catch(error => {
+  //   console.log(error)
+  // })
+
+  window_to_PDF.webContents.print({}, function(success, erroType){
+    if (!success) console.log(erroType);
+
   })
 
   console.log("Print pdf called!");
