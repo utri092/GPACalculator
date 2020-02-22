@@ -24,10 +24,14 @@ function createWindow () {
     }
   })
 
- 
+  window_to_PDF = new BrowserWindow({show: false, 
+    webPreferences: {nodeIntegration: true},
+    parent: mainWindow});
+
   // and load the index.html of the app.
   try {
     mainWindow.loadFile('./index.html');
+    window_to_PDF.loadFile('./transcript.html');
   } catch (error) {
     console.log(error);
   }
@@ -76,31 +80,15 @@ app.on('activate', function() {
 ipc.on('generate-transcript', function (error, messages) {
 //@ref https://www.brainbell.com/javascript/ipc-communication.html 
    
-    window_to_PDF = new BrowserWindow({show: false, 
-                                      webPreferences: {nodeIntegration: true},
-                                      parent: mainWindow});
-
-
-   
     
-    window_to_PDF.loadURL(url.format({ pathname: path.join(__dirname, "transcript.html"),
-    protocol: "file",
-    slashes: true
-                                    })).then(() => {
 
-
-      //Important for refreshing pdf
-      window_to_PDF.reload();
-      window_to_PDF.webContents.clearHistory();                                 
-                                  
-      window_to_PDF.webContents.openDevTools();
-      window_to_PDF.webContents.send("print-pdf", messages);
+    //Important for refreshing pdf
+    window_to_PDF.reload();
+    window_to_PDF.webContents.clearHistory();                                 
+                                
+    window_to_PDF.webContents.openDevTools();
+    window_to_PDF.webContents.send("print-pdf", messages);
       
-      
-    });
-                                    
-  
-
     window_to_PDF.on('closed', function () {
       // Dereference the window object, usually you would store windows
       // in an array if your app supports multi windows, this is the time
@@ -118,7 +106,7 @@ ipc.on('print-pdf-done', function(){
     fs.writeFile('./sample.pdf', data, (error) => {
     if (error) throw error
     //Close window on rendering
-    window_to_PDF.close()
+    //window_to_PDF.close()
     console.log('Write PDF successfully.')
     })
   }).catch(error => {
