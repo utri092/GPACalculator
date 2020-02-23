@@ -4,7 +4,11 @@
   "description": "A minimal Electron application",
   "main": "main.js",
   "scripts": {
-    "start": "electron --disable-gpu ." 
+    "start": "electron --disable-gpu .",
+    "package-mac": "electron-packager .   gpaCalculator --overwrite --asar --platform=darwin --arch=x64 --icon=assets/icons/mac/calculator_icon.icns --out=release-builds",
+    "package-win_32": "electron-packager . --overwrite --asar --platform=win32 --arch=ia32 --icon=assets/icons/win_32/calculator_icon.ico --out=release-builds --version-string.CompanyName=CE --version-string.FileDescription=CE --version-string.ProductName=\"gpaCalculator \"",
+    "package-linux_64": "electron-packager . gpaCalculator --overwrite --asar --platform=linux --arch=x64 --icon=assets/icons/linux_64/calculator_icon.png --out=release-builds",
+    "delete-empty-modules": "delete-empty ./node_modules/ -c"
   },
   "repository": "https://github.com/electron/electron-quick-start",
   "keywords": [
@@ -17,7 +21,9 @@
   "author": "GitHub",
   "license": "CC0-1.0",
   "devDependencies": {
-    "electron": "^7.1.5"
+    "delete-empty": "^3.0.0",
+    "electron": "^8.0.1",
+    "electron-packager": "^14.2.1"
   },
   "dependencies": {
     "and": "0.0.3",

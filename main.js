@@ -14,6 +14,7 @@ const ipc = electron.ipcMain; // Communicate with with window renderers
 let mainWindow;
 let window_to_PDF;
 
+
 function createWindow () {
   mainWindow = new BrowserWindow({
     width: 800,
@@ -90,8 +91,6 @@ ipc.on('generate-transcript', function (error, messages) {
     }).catch(error => {
         console.log(error)
     })
-    //Important for refreshing pdf
-   
       
     window_to_PDF.on('closed', function () {
       // Dereference the window object, usually you would store windows
@@ -105,23 +104,10 @@ ipc.on('generate-transcript', function (error, messages) {
    
 ipc.on('print-pdf-done', function(){
 
-  //Async method
-  // window_to_PDF.webContents.printToPDF({}).then(data => {
-  //   fs.writeFile('./sample.pdf', data, (error) => {
-  //   if (error) throw error
-  //   //Close window on rendering
-  //   //window_to_PDF.close()
-  //   console.log('Write PDF successfully.')
-  //   })
-  // }).catch(error => {
-  //   console.log(error)
-  // })
-
-  window_to_PDF.webContents.print({}, function(success, erroType){
-    if (!success) console.log(erroType);
-
+  window_to_PDF.webContents.print({}, function(success, errorType){
+    if (!success) console.log(errorType);
+    window_to_PDF.close();
+    window_to_PDF = null;
   })
-
-  console.log("Print pdf called!");
 
 })
